@@ -185,10 +185,19 @@ function pause() {
 }
 
 function checkpoint() {
-  local level=${1-3}
-  local env_level=$CHECKPOINT_LEVEL
+  local level=${1-3}  # 默认级别为 3
+  local env_level=${CHECKPOINT_LEVEL-0}  # 默认环境级别为 0
+
+  # 验证两个变量是否都是整数
+  if ! [[ "$level" =~ ^[0-9]+$ && "$env_level" =~ ^[0-9]+$ ]]; then
+    echo "错误：checkpoint 级别必须是整数" >&2
+    return 1
+  fi
+
+  # 比较级别
   if [ "$level" -le "$env_level" ]; then
-    pause
+    echo "=== 检查点 $level：按任意键继续 ==="
+    pause  # 调用 pause 函数暂停执行
   fi
 }
 
